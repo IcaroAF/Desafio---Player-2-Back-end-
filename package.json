@@ -1,0 +1,27 @@
+{
+  "name": "desafio-player2-back-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IcaroAF/Desafio-Player-2-Back-end.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IcaroAF/Desafio-Player-2-Back-end/issues"
+  },
+  "homepage": "https://github.com/IcaroAF/Desafio-Player-2-Back-end#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.0",
+    "nodemon": "^2.0.12"
+  }
+}
