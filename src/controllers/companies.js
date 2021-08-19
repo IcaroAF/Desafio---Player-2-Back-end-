@@ -24,19 +24,14 @@ const signUpUser = async (req, res) => {
         return res.status(400).json("O campo CNPJ necessita ter 14 dígitos (somente números)");
     }
 
-
     try {
         const response = await axios.get(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
 
-        if (!response.data.cnpj) {
+        if (res.status(400)) {
             console.log("Esse CNPJ não está cadastrado velho")
         }
 
-        //console.log(response);
-
         const { cnpj: companyCNPJ, razao_social: razaoSocial, nome_fantasia: nomeFantasia, cep, municipio, uf: estado } = response.data;
-
-        //console.log(companyCNPJ, razaoSocial, nomeFantasia);
 
         const checkCNPJQuery = 'SELECT * FROM empresas WHERE cnpj = ?';
         const ExistingCNPJ = await connection.query(checkCNPJQuery, [companyCNPJ]);
@@ -58,6 +53,9 @@ const signUpUser = async (req, res) => {
 
         return res.status(200).json("Empresa cadastrada com sucesso.");
     } catch (error) {
+        if (error.config.url.includes("brasilapi")) {
+            return res.json("Não existe empresa cadastrada com esse CNPJ");
+        }
         return res.status(400).json(error.message);
     }
 
