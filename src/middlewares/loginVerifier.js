@@ -15,7 +15,7 @@ const loginVerify = async (req, res, next) => {
         const { cnpj } = jwt.verify(token, secret);
 
         const query = 'SELECT * FROM empresas WHERE cnpj = ?';
-        const companyData = await conexao.query(query, [cnpj]);
+        const companyData = await connection.query(query, [cnpj]);
 
         if (!companyData) {
             return res.status(404).json("A empresa não foi encontrada.");

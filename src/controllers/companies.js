@@ -27,10 +27,6 @@ const signUpUser = async (req, res) => {
     try {
         const response = await axios.get(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
 
-        if (res.status(400)) {
-            console.log("Esse CNPJ não está cadastrado velho")
-        }
-
         const { cnpj: companyCNPJ, razao_social: razaoSocial, nome_fantasia: nomeFantasia, cep, municipio, uf: estado } = response.data;
 
         const checkCNPJQuery = 'SELECT * FROM empresas WHERE cnpj = ?';
@@ -61,6 +57,19 @@ const signUpUser = async (req, res) => {
 
 }
 
+const companiesList = async (req, res) => {
+    try {
+        const companiesQuery = 'SELECT cnpj, razao_social, nome_fantasia, cep, municipio, estado, telefone, email FROM empresas';
+        const companiesProfiles = await connection.query(companiesQuery);
+
+        return res.status(200).json(companiesProfiles[0]);
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+
+};
+
 module.exports = {
     signUpUser,
+    companiesList
 };

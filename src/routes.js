@@ -14,4 +14,6 @@ routes.post('/login', login.login);
 
 routes.use(loginVerify);
 
+routes.get('/empresas', companies.companiesList);
+
 module.exports = routes;
