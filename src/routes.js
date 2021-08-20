@@ -20,4 +20,7 @@ routes.get('/empresas', companies.companiesList);
 //rota para edição de cadastro da empresa
 routes.put('/perfil', companies.editCompany);
 
+//deleta cadastro da empresa
+routes.delete('/remover-empresa', companies.deleteCompany);
+
 module.exports = routes;

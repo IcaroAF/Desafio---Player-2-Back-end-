@@ -124,10 +124,24 @@ const editCompany = async (req, res) => {
     } catch (error) {
         return res.status(400).json(error.message);
     }
-}
+};
+
+const deleteCompany = async (req, res) => {
+    const { company } = req;
+
+    try {
+
+        await connection.query('DELETE FROM empresas WHERE cnpj = ?', [company.cnpj]);
+
+        return res.status(200).json("Empresa removida com sucesso");
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
 
 module.exports = {
     signUpUser,
     companiesList,
-    editCompany
+    editCompany,
+    deleteCompany
 };
