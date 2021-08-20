@@ -43,14 +43,14 @@ const signUpUser = async (req, res) => {
         const query = 'INSERT INTO empresas (cnpj, razao_social, nome_fantasia, cep, municipio, estado, telefone, email, senha) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)';
         const registeredCompany = await connection.query(query, [companyCNPJ, razaoSocial, nomeFantasia, cep, municipio, estado, telefone, email, encryptedPwd]);
 
-        if (registeredCompany.TextRow === 0) {
+        if (!registeredCompany[0][0]) {
             return res.status(400).json("Não foi possível cadastrar a empresa.");
         }
 
         return res.status(200).json("Empresa cadastrada com sucesso.");
     } catch (error) {
         if (error.config.url.includes("brasilapi")) {
-            return res.json("Não existe empresa cadastrada com esse CNPJ");
+            return res.status(400).json("Não existe empresa cadastrada com esse CNPJ");
         }
         return res.status(400).json(error.message);
     }
@@ -69,7 +69,65 @@ const companiesList = async (req, res) => {
 
 };
 
+const editCompany = async (req, res) => {
+    let { razao_social, nome_fantasia, cep, municipio, estado, telefone, email, senha } = req.body;
+    const { company } = req;
+
+    if (!razao_social) {
+        razao_social = company.razao_social
+    }
+    if (!nome_fantasia) {
+        nome_fantasia = company.nome_fantasia
+    }
+    if (!cep) {
+        cep = company.cep
+    }
+    if (!municipio) {
+        municipio = company.municipio
+    }
+    if (!estado) {
+        estado = company.estado
+    }
+    if (!telefone) {
+        telefone = company.telefone
+    }
+    if (!email) {
+        email = company.email
+    }
+    if (!senha) {
+        return res.status(400).json("O campo senha é obrigatório");
+    }
+
+    try {
+
+        const checkCNPJQuery = 'SELECT * FROM empresas WHERE cnpj = ?';
+        const queryData = await connection.query(checkCNPJQuery, [company.cnpj]);
+
+        const currentPwd = queryData[0][0].senha
+
+        const verifiedPwd = await bcrypt.compare(senha, currentPwd);
+
+        if (!verifiedPwd) {
+            return res.status(400).json("Senha Incorreta");
+        }
+
+        const updateCompany = 'UPDATE empresas SET razao_social = ?, nome_fantasia =? , cep = ?, municipio = ?, estado = ?, telefone = ? , email = ?, senha = ? WHERE cnpj = ?';
+
+        const updatedCompany = await connection.query(updateCompany, [razao_social, nome_fantasia, cep, municipio, estado, telefone, email, currentPwd, company.cnpj]);
+
+
+        if (updatedCompany[0].affectedRows === 0) {
+            return res.status(400).json("Não foi possível atualizar o cadastro da empresa.");
+        }
+
+        return res.status(200).json("Cadastro atualizado com sucesso.");
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+}
+
 module.exports = {
     signUpUser,
-    companiesList
+    companiesList,
+    editCompany
 };
