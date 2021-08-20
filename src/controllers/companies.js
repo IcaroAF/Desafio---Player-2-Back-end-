@@ -94,6 +94,9 @@ const editCompany = async (req, res) => {
     if (!email) {
         email = company.email
     }
+    if (telefone.length < 10 || telefone.length > 11) {
+        return res.status(400).json("O campo telefone necessita ter 10 ou 11 dígitos (somente números incluindo o DDD)");
+    }
     if (!senha) {
         return res.status(400).json("O campo senha é obrigatório");
     }
